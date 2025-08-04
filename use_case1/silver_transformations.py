@@ -80,6 +80,10 @@ df_silver = df_silver.fillna("NaN", subset=["Price", "Total_amount"])
 
 # COMMAND ----------
 
+df_silver = df_silver.withColumn("Price", when(col("Price").isNull())
+
+# COMMAND ----------
+
 df_silver.display()
 
 # COMMAND ----------
@@ -108,25 +112,16 @@ df_silver.display()
 
 # COMMAND ----------
 
-df_silver = df_silver.withColumn("Status", col("status"))
+df_silver.display()
 
 # COMMAND ----------
 
 df_silver = df_silver.select(
-    col("Order_id"), 
-    col("Order_date"), 
+    col("order_id"), 
+    col("order_date"), 
     col("Customer_id"),
     col("Name"),
     col("Email"),
-    col("Product_id"),
-    col("Product_name"),
-    col("Quantity"),
-    col("Price"),
-    col("Total_amount"),
-    col("City"),
-    col("State"),
-    col("Country"),
-    col("Status")
-    )
+    col("")
 
-df_silver.display()
+    )
