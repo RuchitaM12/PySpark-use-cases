@@ -1,17 +1,9 @@
 # Databricks notebook source
-# MAGIC %sql
-# MAGIC use catalog customer_catalog
+# MAGIC %run /Workspace/Users/mahatoruchita712@gmail.com/PySpark-use-cases/use_case1/utils
 
 # COMMAND ----------
 
-from pyspark.sql.functions import explode, col, cast, when, to_date, try_to_timestamp
-from pyspark.sql.types import IntegerType, FloatType, DateType, DoubleType
-
-# COMMAND ----------
-
-df_bronze = spark.read.format("delta") \
-                 .option("multiLine", "True") \
-                 .table("customer_catalog.bronze.orders")
+df_bronze = read_file("bronze", "orders", "json")
 
 # COMMAND ----------
 
@@ -19,9 +11,27 @@ display(df_bronze)
 
 # COMMAND ----------
 
-df_silver = df_bronze.withColumn("item", explode("items"))
+df = flatten_column(df_bronze)
 
-df_silver = df_silver.drop("items")
+# COMMAND ----------
+
+df.display()
+
+# COMMAND ----------
+
+display(df_bronze.select("customer").dtypes)
+
+# COMMAND ----------
+
+df_bronze.printSchema()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 
@@ -80,10 +90,6 @@ df_silver = df_silver.fillna("NaN", subset=["Price", "Total_amount"])
 
 # COMMAND ----------
 
-df_silver = df_silver.withColumn("Price", when(col("Price").isNull())
-
-# COMMAND ----------
-
 df_silver.display()
 
 # COMMAND ----------
@@ -112,16 +118,29 @@ df_silver.display()
 
 # COMMAND ----------
 
-df_silver.display()
+df_silver = df_silver.withColumn("Status", col("status"))
 
 # COMMAND ----------
 
 df_silver = df_silver.select(
-    col("order_id"), 
-    col("order_date"), 
+    col("Order_id"), 
+    col("Order_date"), 
     col("Customer_id"),
     col("Name"),
     col("Email"),
-    col("")
-
+    col("Product_id"),
+    col("Product_name"),
+    col("Quantity"),
+    col("Price"),
+    col("Total_amount"),
+    col("City"),
+    col("State"),
+    col("Country"),
+    col("Status")
     )
+
+df_silver.display()
+
+# COMMAND ----------
+
+df_silver = write_file(df_silver, "silver", "append")
