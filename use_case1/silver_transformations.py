@@ -3,7 +3,12 @@
 
 # COMMAND ----------
 
-df_bronze = read_file("bronze", "orders", "json")
+# MAGIC %md
+# MAGIC ## Reading the file from bronze
+
+# COMMAND ----------
+
+df_bronze = read_file("bronze", "orders", "json", "permissive")
 
 # COMMAND ----------
 
@@ -11,31 +16,24 @@ display(df_bronze)
 
 # COMMAND ----------
 
-df = flatten_column(df_bronze)
+# MAGIC %md
+# MAGIC ## Flattening the nested struct and array column
 
 # COMMAND ----------
 
-df.display()
+df_silver = flatten_column(df_bronze)
 
 # COMMAND ----------
 
-display(df_bronze.select("customer").dtypes)
+df_silver.display()
+
+# COMMAND ----------
+
+# display(df_bronze.select("customer").dtypes)
 
 # COMMAND ----------
 
 df_bronze.printSchema()
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-display(df_silver)
 
 # COMMAND ----------
 
@@ -67,6 +65,7 @@ df_silver.printSchema()
 
 # COMMAND ----------
 
+"""
 df_silver = df_silver.withColumn("Product_id", col("item.product_id")) \
                      .withColumn("Product_name", col("item.product_name")) \
                      .withColumn("Quantity", col("item.quantity")) \
@@ -75,10 +74,7 @@ df_silver = df_silver.withColumn("Product_id", col("item.product_id")) \
 df_silver = df_silver.drop("item")
 
 display(df_silver)
-
-# COMMAND ----------
-
-df_silver.display()
+"""
 
 # COMMAND ----------
 
